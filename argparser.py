@@ -1,0 +1,22 @@
+import argparse
+
+class ArgParser:
+    
+    def __init__(self):        
+        parser = argparse.ArgumentParser("Crypto Pass", "Tool to help you to keep you passwords secure.", "Some text")
+        parser.add_argument("mode", type=str, help="add/remove/list/find/generate")
+        parser.add_argument("-k", "--key", type=str, help="Your master key to encode/decode data")
+        parser.add_argument("-n", "--name", type=str, help="Exact name in case add/remove, or part of a name in case of find, ignored in case of list")
+        parser.add_argument("-l", "--login", type=str, help="Only for add method, login to save")
+        parser.add_argument("-p", "--password", type=str, help="Only for add method, password to save")
+        parser.add_argument("-gp", "--gen-pass", action="store_true", help="Only for add method, auto generates password as solo string without spaces")
+        
+        args = parser.parse_args()
+        
+        self.mode = args.mode
+        self.key = args.key
+        self.name = args.name
+        self.login = args.login
+        self.password = args.password
+        self.gen_pass = args.gen_pass
+        
