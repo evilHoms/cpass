@@ -21,27 +21,41 @@ CONFIG_FILE_NAME = "config"
 
 args = ArgParser()
 
+if args.mode == "gen":
+    print(f"Generated pass: {gen_pass()}")
+    exit(0)
+
 if not args.key:
     args.key = input("Enter the key: ")
     
 config = Config(CONFIG_FILE_NAME)
 dropbox_token = config.get_dropbox_token()
 # TODO pass it to storage, add dropbox functionality to compare files and apply latest one if hashes are different
-print(dropbox_token)
+# print(dropbox_token)
 
 cryptor = Cryptor(args.key)
 storage = Storage(cryptor, STORAGE_FILE_NAME)
 
 if args.mode == "add":
+    add_tip_prompt = False
+    if (not args.name or not args.login or not args.password) and not args.tip:
+        add_tip_prompt = True
+    
     if not args.name:
         args.name = input("Enter the name: ")
+        
+    if not args.login:
+        args.login = input(f"Enter the login to save for {args.name} (Empty by default): ")
 
     if args.gen_pass:
         args.password = gen_pass()
-    elif not args.login and not args.password:
-        args.password = input(f"Enter the value to save for {args.name}: ")
+    elif not args.password:
+        args.password = input(f"Enter the password to save for {args.name}: ")
         
-    value = f"{args.login + ' ' or ''}{args.password}"
+    if add_tip_prompt:
+        args.tip = input(f"Any tips for the record {args.name}? (Empty by default): ")
+        
+    value = f"{args.login + ' ' if args.login else ''}{args.password}{' : ' + args.tip if args.tip else ''}"
     storage.add(args.name, value)
     
     print(f"{args.name}: {value}")
