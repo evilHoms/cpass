@@ -60,18 +60,37 @@ if args.mode == "add":
     storage.add(args.name, value)
     
     print(f"{args.name}: {value}")
-elif args.mode == "list":
+
+elif args.mode == "ls":
     storage.list()
+
 elif args.mode == "find":
     if not args.name:
         args.name = input("Enter the name to find or part of a name: ")
-    
     found = storage.find(args.name)
     print(found)
-elif args.mode == "remove":
+
+elif args.mode == "frm":
+    if not args.name:
+        args.name = input("Enter the name to find or part of a name: ")
+    found = storage.find(args.name)
+    if not found:
+        print(f"No items found by '{args.name}' string")
+    else:
+        print(found)
+        should_remove = input("Are you sure to remove all listed above records? (y/n): ").lower() == "y"
+        if should_remove:
+            num_removed = storage.remove_by_substring(args.name)
+            print(f"Removed records: {num_removed}")
+
+elif args.mode == "rm":
     if not args.name:
         args.name = input("Enter the name to remove: ")
-    
-    storage.delete(args.name)
+    num_removed = storage.remove(args.name)
+    if not num_removed:
+        print(f"No items found by '{args.name}' name")
+    else:
+        print(f"Removed records: {num_removed}")
+
 else:
     print("Wrong mode!")

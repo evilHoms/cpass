@@ -14,12 +14,42 @@ class Storage:
         self.store = local_data
     
     def add(self, name: str, value: str):
-        # TODO if name already exist show prompt to ask rewrite or rename
         self.store[self.cryptor.encrypt(name)] = self.cryptor.encrypt(value)
+        # TODO sync with external services
         self.file_store.update_file(self.store)
         
     def remove(self, name: str):
-        del self.store[self.cryptor.encrypt(name)]
+        keys_to_del = []
+        for key in self.store:
+            store_name = self.cryptor.decrypt(key)
+            if store_name == name:
+                keys_to_del.append(key)
+                
+        for key in keys_to_del:
+            del self.store[key]
+        
+        if len(keys_to_del) > 0:
+            # TODO sync with external services
+            self.file_store.update_file(self.store)
+            return len(keys_to_del)
+        
+        return 0
+            
+    def remove_by_substring(self, name: str):
+        keys_to_del = []
+        for key in  self.store:
+            if self.cryptor.decrypt(key).find(name) != -1:
+                keys_to_del.append(key)
+                
+        for key in keys_to_del:
+            del self.store[key]
+                
+        if len(keys_to_del) > 0:
+            # TODO sync with external services
+            self.file_store.update_file(self.store)
+            return len(keys_to_del)
+        
+        return 0
         
     def find(self, name: str):
         result = ""
