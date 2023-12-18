@@ -12,7 +12,6 @@ STORAGE_FILE_NAME = "data"
 # Name of config file. json format.
 CONFIG_FILE_NAME = "config"
 
-# TODO record duplications, in case of same name add number to the record
 # TODO configure, for exteranl services (dropbox?) add encryption to token
 # TODO add delete functionality
 # TODO add some fake names/values for entities which throw error during decrypting
@@ -43,6 +42,8 @@ if args.mode == "add":
     
     if not args.name:
         args.name = input("Enter the name: ")
+        
+    args.name = storage.check_name(args.name)
         
     if not args.login:
         args.login = input(f"Enter the login to save for {args.name} (Empty by default): ")

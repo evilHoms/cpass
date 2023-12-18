@@ -39,4 +39,17 @@ class Storage:
         key_list.sort()
         for key in key_list:
             print(f"{key}: {decrypted_map[key]}")
+            
+    def check_name(self, name: str):
+        decrypted_map = {}
+        for key in self.store:
+            decrypted_key = self.cryptor.decrypt(key)
+            decrypted_map[decrypted_key] = self.cryptor.decrypt(self.store[key])
+        index = 0
+        pname = name
+        while pname in decrypted_map:
+            index += 1
+            pname = name + f" ({index})"
+        return pname
+            
     
