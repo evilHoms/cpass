@@ -30,6 +30,13 @@ class Storage:
         return result
     
     def list(self):
+        decrypted_map = {}
+        key_list = []
         for key in self.store:
-            print(f"{self.cryptor.decrypt(key)}: {self.cryptor.decrypt(self.store[key])}")
+            decrypted_key = self.cryptor.decrypt(key)
+            decrypted_map[decrypted_key] = self.cryptor.decrypt(self.store[key])
+            key_list.append(decrypted_key)
+        key_list.sort()
+        for key in key_list:
+            print(f"{key}: {decrypted_map[key]}")
     

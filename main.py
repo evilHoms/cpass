@@ -12,8 +12,8 @@ STORAGE_FILE_NAME = "data"
 # Name of config file. json format.
 CONFIG_FILE_NAME = "config"
 
+# TODO record duplications, in case of same name add number to the record
 # TODO configure, for exteranl services (dropbox?) add encryption to token
-# TODO sort main output abc
 # TODO add delete functionality
 # TODO add some fake names/values for entities which throw error during decrypting
 # TODO use external services to store and verify if version correct
