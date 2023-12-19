@@ -1,16 +1,15 @@
 from pathlib import Path
 from cryptor import Cryptor
+import os
 import json
 
 DROPBOX_NAME = "dropbox"
 
 class Config:
     
-    def __init__(self, cryptor: Cryptor, file_name: str):
-        self.file_name = file_name
+    def __init__(self, cryptor: Cryptor, config_path: Path):
         self.cryptor = cryptor
-        dir_path = Path(__file__).parent.resolve()
-        self.config_path = Path(f"{dir_path}/{file_name}.json")
+        self.config_path = config_path
 
         if not self.config_path.exists():
             with open(self.config_path, 'w') as file:

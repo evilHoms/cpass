@@ -5,12 +5,19 @@ from cryptor import Cryptor
 from storage import Storage
 from config import Config
 from passgen import gen_pass
+from pathlib import Path
+import os
 
-# Name of local file as well as file in external storages. json format.
-STORAGE_FILE_NAME = "data"
+# Path to dir with local files and make sure that it is exist
+LOCAL_FILES_DIR = f"{Path(__file__).parent.resolve()}/local"
+if not os.path.exists(LOCAL_FILES_DIR):
+    os.mkdir(LOCAL_FILES_DIR)
 
-# Name of config file. json format.
-CONFIG_FILE_NAME = "config"
+# Path to file with stored data. json format.
+STORAGE_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/data.json")
+
+# Path to config file. json format.
+CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
 # TODO configure, for exteranl services (dropbox?) add encryption to token
 # TODO add some fake names/values for entities which throw error during decrypting
@@ -30,8 +37,8 @@ if not args.key:
 # print(dropbox_token)
 
 cryptor = Cryptor(args.key)
-config = Config(cryptor, CONFIG_FILE_NAME)
-storage = Storage(cryptor, config, STORAGE_FILE_NAME)
+config = Config(cryptor, CONFIG_FILE_PATH)
+storage = Storage(cryptor, config, STORAGE_FILE_PATH)
 
 if args.mode == "add":
     add_tip_prompt = False

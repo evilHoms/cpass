@@ -1,11 +1,12 @@
 from cryptor import Cryptor
 from config import Config
 from filestore import FileStore
+from pathlib import Path
 
 class Storage:
     
-    def __init__(self, cryptor: Cryptor, config: Config, file_name: str):
-        self.file_store = FileStore(file_name)
+    def __init__(self, cryptor: Cryptor, config: Config, file_path: Path):
+        self.file_store = FileStore(file_path)
         local_data = self.file_store.read_file_data()
         
         # Get data from file and from external storages

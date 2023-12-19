@@ -1,11 +1,11 @@
 from pathlib import Path
+import os
 import json
 
 class FileStore:
     
-    def __init__(self, file_name):
-        self.dir_path = Path(__file__).parent.resolve()
-        self.store_path = Path(f"{self.dir_path}/{file_name}.json")
+    def __init__(self, store_path: Path):
+        self.store_path = store_path
         
         if not self.store_path.exists():
             file = open(self.store_path, "w")
