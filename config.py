@@ -1,12 +1,14 @@
 from pathlib import Path
+from cryptor import Cryptor
 import json
 
 DROPBOX_NAME = "dropbox"
 
 class Config:
     
-    def __init__(self, file_name):
+    def __init__(self, cryptor: Cryptor, file_name: str):
         self.file_name = file_name
+        self.cryptor = cryptor
         dir_path = Path(__file__).parent.resolve()
         self.config_path = Path(f"{dir_path}/{file_name}.json")
 
@@ -25,9 +27,9 @@ class Config:
             self.set_dropbox_token(token)
             return token
             
-        return self.config[DROPBOX_NAME]
+        return self.cryptor.decrypt(self.config[DROPBOX_NAME])
             
     def set_dropbox_token(self, token):
-        self.config[DROPBOX_NAME] = token
+        self.config[DROPBOX_NAME] = self.cryptor.encrypt(token)
         with open(self.config_path, 'w') as file:
             json.dump(self.config, file)

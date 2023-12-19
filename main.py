@@ -13,7 +13,6 @@ STORAGE_FILE_NAME = "data"
 CONFIG_FILE_NAME = "config"
 
 # TODO configure, for exteranl services (dropbox?) add encryption to token
-# TODO add delete functionality
 # TODO add some fake names/values for entities which throw error during decrypting
 # TODO use external services to store and verify if version correct
 # TODO write tests
@@ -27,13 +26,12 @@ if args.mode == "gen":
 if not args.key:
     args.key = input("Enter the key: ")
     
-config = Config(CONFIG_FILE_NAME)
-dropbox_token = config.get_dropbox_token()
 # TODO pass it to storage, add dropbox functionality to compare files and apply latest one if hashes are different
 # print(dropbox_token)
 
 cryptor = Cryptor(args.key)
-storage = Storage(cryptor, STORAGE_FILE_NAME)
+config = Config(cryptor, CONFIG_FILE_NAME)
+storage = Storage(cryptor, config, STORAGE_FILE_NAME)
 
 if args.mode == "add":
     add_tip_prompt = False

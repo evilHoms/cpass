@@ -1,9 +1,10 @@
 from cryptor import Cryptor
+from config import Config
 from filestore import FileStore
 
 class Storage:
     
-    def __init__(self, cryptor: Cryptor, file_name: str):
+    def __init__(self, cryptor: Cryptor, config: Config, file_name: str):
         self.file_store = FileStore(file_name)
         local_data = self.file_store.read_file_data()
         
@@ -11,6 +12,7 @@ class Storage:
         self.cryptor = cryptor
         
         # TODO check date of local file and external data, apply latest one (check for the key before it?)
+        dropbox_token = config.get_dropbox_token()
         self.store = local_data
     
     def add(self, name: str, value: str):
