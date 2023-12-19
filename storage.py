@@ -13,6 +13,7 @@ class Storage:
         
         # TODO check date of local file and external data, apply latest one (check for the key before it?)
         dropbox_token = config.get_dropbox_token()
+        print(dropbox_token)
         self.store = local_data
     
     def add(self, name: str, value: str):
