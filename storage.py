@@ -1,26 +1,32 @@
 from cryptor import Cryptor
 from config import Config
 from filestore import FileStore
+from dropboxstore import DropboxStore
 from pathlib import Path
 
 class Storage:
     
     def __init__(self, cryptor: Cryptor, config: Config, file_path: Path):
+        self.cryptor = cryptor
+        
+        # Get data from local file
         self.file_store = FileStore(file_path)
         local_data = self.file_store.read_file_data()
         
-        # Get data from file and from external storages
-        self.cryptor = cryptor
-        
-        # TODO check date of local file and external data, apply latest one (check for the key before it?)
-        dropbox_token = config.get_dropbox_token()
-        print(dropbox_token)
+        # Get data from dropbox
+        self.dpx = DropboxStore(config.get_dropbox_token(), f"/{file_path.name}")
+        dpx_data = self.dpx.download()
+
+        # TODO compare data apply if hash not the same, ask which to apply
+        print(local_data)
+        print(dpx_data)
         self.store = local_data
     
     def add(self, name: str, value: str):
         self.store[self.cryptor.encrypt(name)] = self.cryptor.encrypt(value)
-        # TODO sync with external services
+        # Update local and external storages
         self.file_store.update_file(self.store)
+        self.dpx.upload(self.store)
         
     def remove(self, name: str):
         keys_to_del = []
@@ -33,8 +39,9 @@ class Storage:
             del self.store[key]
         
         if len(keys_to_del) > 0:
-            # TODO sync with external services
+            # Update local and external storages
             self.file_store.update_file(self.store)
+            self.dpx.upload(self.store)
             return len(keys_to_del)
         
         return 0
@@ -49,8 +56,9 @@ class Storage:
             del self.store[key]
                 
         if len(keys_to_del) > 0:
-            # TODO sync with external services
+            # Update local and external storages
             self.file_store.update_file(self.store)
+            self.dpx.upload(self.store)
             return len(keys_to_del)
         
         return 0

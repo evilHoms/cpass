@@ -19,7 +19,9 @@ STORAGE_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/data.json")
 # Path to config file. json format.
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO configure, for exteranl services (dropbox?) add encryption to token
+# TODO remove encryption from inmemory store, encrypt only when writing to file or external service
+# TODO resend dropbox requests in case of error up to 3 times with 3 sec intervals
+# TODO configure, for exteranl services (dropbox?) add encryption to token (config method)
 # TODO add some fake names/values for entities which throw error during decrypting
 # TODO use external services to store and verify if version correct
 # TODO write tests
