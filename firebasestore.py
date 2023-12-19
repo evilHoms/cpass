@@ -1,11 +1,14 @@
-from dropbox import Dropbox, files
-from cryptor import Cryptor
+import firebase_admin
+from firebase_admin import credentials
 import json
+from cryptor import Cryptor
 
-class DropboxStore(Dropbox):
+class FirebaseStore:
     
     def __init__(self, token: str, file_path: str, cryptor: Cryptor):
-        super().__init__(token)
+        cred = credentials.Certificate("path/to/serviceAccountKey.json")
+        firebase_admin.initialize_app(cred)
+        
         self.file_path = file_path
         self.cryptor = cryptor
         # try:
