@@ -1,4 +1,4 @@
-config.json
+*config.json
 data.store
 __pycache__
 *-firebase-adminsdk-*

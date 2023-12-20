@@ -1,9 +1,8 @@
 from pathlib import Path
 from cryptor import Cryptor
-import os
 import json
 
-DROPBOX_NAME = "dropbox"
+FIREBASE_NAME = "firebase"
 
 class Config:
     
@@ -13,22 +12,22 @@ class Config:
 
         if not self.config_path.exists():
             with open(self.config_path, 'w') as file:
-                json.dump({DROPBOX_NAME: None}, file)
+                json.dump({FIREBASE_NAME: None}, file)
                 
         with open(self.config_path) as file:
             self.config = json.load(file)
-    
-    def get_dropbox_token(self):
-        if not self.config[DROPBOX_NAME]:
-            token = input("Dropbox access token is not specified. Without it data can't be sync with dropbox.\nEnter the token or leave empty to ignore")
-            if not token:
+            
+    def get_firebase_config(self):
+        if not self.config[FIREBASE_NAME]:
+            path = input("Firebase config is not found. Without it data can't be sync.\nEnter path to the config file: (Full absolute path with file name and extension)\n")
+            if not path:
                 return None
-            self.set_dropbox_token(token)
-            return token
-            
-        return self.cryptor.decrypt(self.config[DROPBOX_NAME])
-            
-    def set_dropbox_token(self, token):
-        self.config[DROPBOX_NAME] = self.cryptor.encrypt(token)
+            bucket = input("Enter firebase bucket name:\n")
+            self.set_firebase_config(path, bucket)
+            return path, bucket
+        return self.config[FIREBASE_NAME]["path"], self.config[FIREBASE_NAME]["bucket"]
+    
+    def set_firebase_config(self, path: str, bucket: str):
+        self.config[FIREBASE_NAME] = { "path": path, "bucket": bucket }
         with open(self.config_path, 'w') as file:
             json.dump(self.config, file)

@@ -1,28 +1,34 @@
 import firebase_admin
-from firebase_admin import credentials
-import json
+from firebase_admin import credentials, storage
 from cryptor import Cryptor
+from datetime import datetime
+import json
 
 class FirebaseStore:
     
-    def __init__(self, token: str, file_path: str, cryptor: Cryptor):
-        cred = credentials.Certificate("path/to/serviceAccountKey.json")
-        firebase_admin.initialize_app(cred)
+    def __init__(self, config_path: str, bucket: str, files_dir: str, store_name: str, cryptor: Cryptor):
+        cred = credentials.Certificate(config_path)
+        firebase_admin.initialize_app(cred, { "storageBucket": bucket.replace("gs://", "") })
         
-        self.file_path = file_path
         self.cryptor = cryptor
-        # try:
-        #     self.files_upload(self.cryptor.encrypt(json.dumps({})).encode(), self.file_path)
-        # except:
-        #     pass
-            
-    def upload(self, data):
-        self.files_upload(self.cryptor.encrypt(json.dumps(data)).encode(), self.file_path, mode=files.WriteMode.overwrite)
+        self.files_dir = files_dir
+        self.store_name = store_name
+        self.bucket = storage.bucket()
         
-    def meta(self):
-        return self.files_get_metadata(self.file_path).server_modified
-        
-    def download(self):
-        meta, res = self.files_download(self.file_path)
-        content = res.content.decode()
-        return meta.client_modified, json.loads(self.cryptor.decrypt(content))
+        blob = self.bucket.get_blob(self.store_name)
+        if not blob.exists():
+            print(f"Firebase: no file with name {self.store_name}. Uploading local file to firebase storage.")
+            self.upload_data()
+    
+    # Uploads local data file to firebase
+    def upload_data(self):
+        local_data_path = f"{self.files_dir}/{self.store_name}"
+        blob = self.bucket.blob(self.store_name)
+        blob.upload_from_filename(local_data_path)
+    
+    # Downloads data from firebase by probided during init store_name
+    def download_data(self):
+        blob = self.bucket.get_blob(self.store_name)
+        data = json.loads(self.cryptor.decrypt(blob.download_as_text()))
+        date = datetime.utcfromtimestamp(round(blob.updated.timestamp()))
+        return date, data 

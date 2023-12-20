@@ -13,17 +13,17 @@ LOCAL_FILES_DIR = f"{Path(__file__).parent.resolve()}/local"
 if not os.path.exists(LOCAL_FILES_DIR):
     os.mkdir(LOCAL_FILES_DIR)
 
-# Path to file with stored data
-STORAGE_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/data.store")
+# File name for local and external storages
+DATA_FILE_NAME = "data.store"
 
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO switch from dropbox to firebase. dropbox sucks, constant token expires, no option to keep it more then for few hours
+# TODO copy fb config to file with encryption. Print message that original config can be deleted
 # TODO add posibility to keep copy of file, when out of sync and replace one file with another
 # TODO remove encryption from inmemory store, encrypt only when writing to file or external service
-# TODO resend dropbox requests in case of error up to 3 times with 3 sec intervals
-# TODO configure, for exteranl services (dropbox?) add encryption to token (config method)
+# TODO resend firebase requests in case of error up to 3 times with 3 sec intervals
+# TODO configure, for exteranl services (firebase)
 # TODO add some fake names/values for entities which throw error during decrypting
 # TODO use external services to store and verify if version correct
 # TODO write tests
@@ -36,13 +36,10 @@ if args.mode == "gen":
 
 if not args.key:
     args.key = input("Enter the key: ")
-    
-# TODO pass it to storage, add dropbox functionality to compare files and apply latest one if hashes are different
-# print(dropbox_token)
 
 cryptor = Cryptor(args.key)
 config = Config(cryptor, CONFIG_FILE_PATH)
-storage = Storage(cryptor, config, STORAGE_FILE_PATH)
+storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME)
 
 if args.mode == "add":
     add_tip_prompt = False
