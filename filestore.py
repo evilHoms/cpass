@@ -34,3 +34,13 @@ class FileStore:
         old_path = self.store_path.with_name("old.store")
         with open(old_path, "w") as file:
             file.write(self.cryptor.encrypt(json.dumps(data)))
+            
+    def recrypt(self, new_key: str):
+        with open(self.store_path) as file:
+            cdata = file.read()
+            data = json.loads(self.cryptor.decrypt(cdata))
+        
+        new_cryptor = Cryptor(new_key)
+        with open(self.store_path, "w") as file:
+            file.write(new_cryptor.encrypt(json.dumps(data)))
+    

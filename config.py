@@ -48,3 +48,13 @@ class Config:
                 json.dump(self.config, file)
             
         return cred, bucket
+    
+    def recrypt_firebase_key(self, new_key):
+        if self.config[FIREBASE_NAME]:
+            dkey = self.cryptor.decrypt(self.config[FIREBASE_NAME])
+            new_cryptor = Cryptor(new_key)
+            self.config[FIREBASE_NAME]["key"] = new_cryptor.encrypt(dkey)
+            
+            with open(self.config_path, 'w') as file:
+                json.dump(self.config, file)
+            

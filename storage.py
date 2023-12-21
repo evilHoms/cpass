@@ -7,14 +7,16 @@ from firebasestore import FirebaseStore
 class Storage:
     
     def __init__(self, cryptor: Cryptor, config: Config, file_dir: Path, store_name: str):
+        self.cryptor = cryptor
+        
         # Get data from local file
-        self.file_store = FileStore(Path(f"{file_dir}/{store_name}"), cryptor)
+        self.file_store = FileStore(Path(f"{file_dir}/{store_name}"), self.cryptor)
         local_mod_time, local_data = self.file_store.read_file_data()
         
         # Get data from firebase
         fb_path, fb_bucket, fb_key = config.get_firebase_config()
         if fb_path and fb_bucket and fb_key:
-            self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, cryptor.decrypt(fb_key))
+            self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, self.cryptor.decrypt(fb_key))
             fb_mod_time, fb_data = self.fb.download_data()
 
         # Check data from local file and from firebase, if data not synced ask which one to apply
@@ -101,5 +103,8 @@ class Storage:
             index += 1
             pname = name + f" ({index})"
         return pname
-            
+    
+    def recrypt(self, new_key: str):
+        self.file_store.recrypt(new_key)
+        self.fb.upload_data()
     

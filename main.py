@@ -6,6 +6,7 @@ from storage import Storage
 from config import Config
 from passgen import gen_pass
 from pathlib import Path
+from getpass import getpass
 import os
 
 # Path to dir with local files and make sure that it is exist
@@ -19,6 +20,7 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
+# TODO add change key functionality
 # TODO resend firebase requests in case of error up to 3 times with 3 sec intervals, show warning after 3rd request
 # TODO add some fake names/values for entities which throw error during decrypting or may be show error in case wrong key
 # TODO think about spare external service (dropbox doesn't suit because of auth, firebase is used now)
@@ -32,7 +34,7 @@ if args.mode == "gen":
     exit(0)
 
 if not args.key:
-    args.key = input("Enter the key: ")
+    args.key = getpass("Enter the key: ")
     
 # TODO check the key
 
@@ -48,6 +50,18 @@ if args.mode == "config":
 
 
 storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME)
+
+if args.mode == "change":
+    print("Enter new key")
+    new_key = getpass("[Key]: ")
+    print("Repeat the key")
+    new_key_rep = getpass("[Key]: ")
+    if new_key != new_key_rep:
+        print("Entered keys are not the same!")
+    else:
+        config.recrypt_firebase_key(new_key)
+        storage.recrypt(new_key)
+        print("New key applied, data recrypted")
 
 if args.mode == "add":
     add_tip_prompt = False
@@ -106,5 +120,5 @@ elif args.mode == "rm":
     else:
         print(f"Removed records: {num_removed}")
 
-elif args.mode != "config":
+elif args.mode != "config" and args.mode != "change":
     print("Wrong mode!")
