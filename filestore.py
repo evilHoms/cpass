@@ -30,3 +30,7 @@ class FileStore:
         with open(self.store_path, "w") as file:
             file.write(self.cryptor.encrypt(json.dumps(data)))
             
+    def save_old(self, data):
+        old_path = self.store_path.with_name("old.store")
+        with open(old_path, "w") as file:
+            file.write(self.cryptor.encrypt(json.dumps(data)))

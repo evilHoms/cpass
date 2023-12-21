@@ -13,7 +13,7 @@
                 <mxCell id="4" value="filestore.py&lt;br&gt;Working with local file store" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="80" y="340" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" value="dropboxstore.py&lt;br&gt;Working with dropbox store" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="6" value="firebasestore.py&lt;br&gt;Working with firebase storage" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="120" y="240" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="8" value="cryptor.py&lt;br&gt;Encryption and decryption algoritms" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">

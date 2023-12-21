@@ -1,0 +1,2 @@
+For firebase: account is needed. Create json config file, and bucket.
+If after sync error applyed wrong store, old one will be stored in local/old.store file. If you want to replace data back, replace data.store file with old.store.

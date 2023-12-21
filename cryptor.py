@@ -8,6 +8,7 @@ HASH_KEY = '111222'
 class Cryptor:
     
     def __init__(self, key: str):
+        self.key = key
         encoded_key = b64encode(digest(HASH_KEY.encode(), key.encode(), sha256)).decode()
         self.cryptor = Fernet(encoded_key)
     

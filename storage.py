@@ -12,23 +12,26 @@ class Storage:
         local_mod_time, local_data = self.file_store.read_file_data()
         
         # Get data from firebase
-        fb_path, fb_bucket = config.get_firebase_config()
-        self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, cryptor)
-        fb_mod_time, fb_data = self.fb.download_data()
+        fb_path, fb_bucket, fb_key = config.get_firebase_config()
+        if fb_path and fb_bucket and fb_key:
+            self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, cryptor.decrypt(fb_key))
+            fb_mod_time, fb_data = self.fb.download_data()
 
         # Check data from local file and from firebase, if data not synced ask which one to apply
         data_to_use = local_data
-        if local_data != fb_data:
+        if fb_path and fb_bucket and fb_key and local_data != fb_data:
             print("Local data not synced with external data: ")
             print(f"[Firebase]: last modified: {fb_mod_time} UTC,   number of records: {len(fb_data)}")
-            print(f"[Local]:     last modified: {local_mod_time} UTC, number of records: {len(local_data)}")
+            print(f"[Local]:    last modified: {local_mod_time} UTC, number of records: {len(local_data)}")
             ans = None
             while ans != "local" and ans != "firebase":
                 ans = input(f"Which one to apply? (local/firebase): ").lower()
             if ans == "firebase":
                 data_to_use = fb_data
+                self.file_store.save_old(local_data)
                 self.file_store.update_file(data_to_use)
             else:
+                self.file_store.save_old(fb_data)
                 self.fb.upload_data()
 
         self.store = data_to_use

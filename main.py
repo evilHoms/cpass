@@ -19,13 +19,10 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO copy fb config to file with encryption. Print message that original config can be deleted
-# TODO add posibility to keep copy of file, when out of sync and replace one file with another
-# TODO remove encryption from inmemory store, encrypt only when writing to file or external service
-# TODO resend firebase requests in case of error up to 3 times with 3 sec intervals
-# TODO configure, for exteranl services (firebase)
-# TODO add some fake names/values for entities which throw error during decrypting
-# TODO use external services to store and verify if version correct
+# TODO resend firebase requests in case of error up to 3 times with 3 sec intervals, show warning after 3rd request
+# TODO add some fake names/values for entities which throw error during decrypting or may be show error in case wrong key
+# TODO think about spare external service (dropbox doesn't suit because of auth, firebase is used now)
+# TODO write README.md
 # TODO write tests
 
 args = ArgParser()
@@ -36,9 +33,20 @@ if args.mode == "gen":
 
 if not args.key:
     args.key = input("Enter the key: ")
+    
+# TODO check the key
 
 cryptor = Cryptor(args.key)
 config = Config(cryptor, CONFIG_FILE_PATH)
+
+if args.mode == "config":
+    cred, bucket = config.set_firebase_config()
+    if not cred or not bucket:
+        print("Firebase creds and bucket are required.")
+        exit(0)
+    print("Config encrypted and cached.")
+
+
 storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME)
 
 if args.mode == "add":
@@ -98,5 +106,5 @@ elif args.mode == "rm":
     else:
         print(f"Removed records: {num_removed}")
 
-else:
+elif args.mode != "config":
     print("Wrong mode!")
