@@ -20,9 +20,7 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO add change key functionality (recrypt key bug, investigate)
 # TODO resend firebase requests in case of error up to 3 times with 3 sec intervals, show warning after 3rd request
-# TODO add some fake names/values for entities which throw error during decrypting or may be show error in case wrong key
 # TODO think about spare external service (dropbox doesn't suit because of auth, firebase is used now)
 # TODO write README.md
 # TODO write tests
@@ -42,14 +40,18 @@ cryptor = Cryptor(args.key)
 config = Config(cryptor, CONFIG_FILE_PATH)
 
 if args.mode == "config":
+    print("Config will be encrypted with the key you entered. Make sure you use same key as for local storage.")
     cred, bucket = config.set_firebase_config()
     if not cred or not bucket:
         print("Firebase creds and bucket are required.")
         exit(0)
     print("Config encrypted and cached.")
-
-
-storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME)
+try:
+    storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME, args.file_local)
+except:
+    print("[Error]: storage can't be initialized, check your key/config/internet connection.")
+    print("If you want to run script in local mode, add `-fl` flag. If data in this mode will be changed, external storage will be out of sync, but it can be synced latter.")
+    exit(0)
 
 if args.mode == "change":
     print("Keys for both local and external storeage will be changed.")

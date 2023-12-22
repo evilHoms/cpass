@@ -11,6 +11,7 @@ class ArgParser:
         parser.add_argument("-p", "--password", type=str, help="Only for add method, password to save")
         parser.add_argument("-gp", "--gen-pass", action="store_true", help="Only for add method, auto generates password as solo string without spaces")
         parser.add_argument("-t", "--tip", type=str, help="Only for add method, add tip to the record.")
+        parser.add_argument("-fl", "--file-local", action="store_true", help="Runs script in local mode, external storages will be out of sync. Can be synced latter.")
         
         args = parser.parse_args()
         
@@ -21,4 +22,5 @@ class ArgParser:
         self.password = args.password
         self.gen_pass = args.gen_pass
         self.tip = args.tip
+        self.file_local = args.file_local
         
