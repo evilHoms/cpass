@@ -20,9 +20,6 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO resend firebase requests in case of error up to 3 times with 3 sec intervals, show warning after 3rd request
-# TODO think about spare external service (dropbox doesn't suit because of auth, firebase is used now)
-# TODO write README.md
 # TODO write tests
 
 args = ArgParser()
@@ -33,8 +30,6 @@ if args.mode == "gen":
 
 if not args.key:
     args.key = getpass("Enter the key: ")
-    
-# TODO check the key before config
 
 cryptor = Cryptor(args.key)
 config = Config(cryptor, CONFIG_FILE_PATH)
