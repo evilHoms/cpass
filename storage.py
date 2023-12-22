@@ -8,6 +8,7 @@ class Storage:
     
     def __init__(self, cryptor: Cryptor, config: Config, file_dir: Path, store_name: str):
         self.cryptor = cryptor
+        self.config = config
         
         # Get data from local file
         self.file_store = FileStore(Path(f"{file_dir}/{store_name}"), self.cryptor)
@@ -34,7 +35,7 @@ class Storage:
                 self.file_store.update_file(data_to_use)
             else:
                 self.file_store.save_old(fb_data)
-                self.fb.upload_data()
+                self.upload_external()
 
         self.store = data_to_use
     
@@ -42,7 +43,7 @@ class Storage:
         self.store[name] = value
         # Update local and external storages
         self.file_store.update_file(self.store)
-        self.fb.upload_data()
+        self.upload_external()
         
     def remove(self, name: str):
         keys_to_del = []
@@ -56,7 +57,7 @@ class Storage:
         if len(keys_to_del) > 0:
             # Update local and external storages
             self.file_store.update_file(self.store)
-            self.fb.upload_data()
+            self.upload_external()
             return len(keys_to_del)
         
         return 0
@@ -73,7 +74,7 @@ class Storage:
         if len(keys_to_del) > 0:
             # Update local and external storages
             self.file_store.update_file(self.store)
-            self.fb.upload_data()
+            self.upload_external()
             return len(keys_to_del)
         
         return 0
@@ -106,5 +107,10 @@ class Storage:
     
     def recrypt(self, new_key: str):
         self.file_store.recrypt(new_key)
-        self.fb.upload_data()
+        self.upload_external()
+        self.config.recrypt_firebase_config(new_key)
+        
+    def upload_external(self):
+        if hasattr(self, "fb"):
+            self.fb.upload_data()
     

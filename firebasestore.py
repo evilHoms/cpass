@@ -7,7 +7,6 @@ import json
 class FirebaseStore:
     
     def __init__(self, enc_cred: str, bucket: str, files_dir: str, store_name: str, key: str):
-        print(key)
         self.cryptor = Cryptor(key)
         conf = json.loads(self.cryptor.decrypt(enc_cred))
         cred = credentials.Certificate(conf)
@@ -25,8 +24,6 @@ class FirebaseStore:
     
     # Uploads local data file to firebase
     def upload_data(self):
-        print(self.cryptor.key)
-
         local_data_path = f"{self.files_dir}/{self.store_name}"
         blob = self.bucket.blob(self.store_name)
         blob.upload_from_filename(local_data_path)
@@ -34,6 +31,10 @@ class FirebaseStore:
     # Downloads data from firebase by probided during init store_name
     def download_data(self):
         blob = self.bucket.get_blob(self.store_name)
-        data = json.loads(self.cryptor.decrypt(blob.download_as_text()))
+        rawdata = blob.download_as_text()
+        if not rawdata:
+            data = {}
+        else:
+            data = json.loads(self.cryptor.decrypt(blob.download_as_text()))
         date = datetime.utcfromtimestamp(round(blob.updated.timestamp()))
         return date, data

@@ -20,7 +20,7 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO add change key functionality
+# TODO add change key functionality (recrypt key bug, investigate)
 # TODO resend firebase requests in case of error up to 3 times with 3 sec intervals, show warning after 3rd request
 # TODO add some fake names/values for entities which throw error during decrypting or may be show error in case wrong key
 # TODO think about spare external service (dropbox doesn't suit because of auth, firebase is used now)
@@ -36,7 +36,7 @@ if args.mode == "gen":
 if not args.key:
     args.key = getpass("Enter the key: ")
     
-# TODO check the key
+# TODO check the key before config
 
 cryptor = Cryptor(args.key)
 config = Config(cryptor, CONFIG_FILE_PATH)
@@ -52,14 +52,12 @@ if args.mode == "config":
 storage = Storage(cryptor, config, LOCAL_FILES_DIR, DATA_FILE_NAME)
 
 if args.mode == "change":
-    print("Enter new key")
-    new_key = getpass("[Key]: ")
-    print("Repeat the key")
-    new_key_rep = getpass("[Key]: ")
+    print("Keys for both local and external storeage will be changed.")
+    new_key = getpass("[Key] Enter new key: ")
+    new_key_rep = getpass("[Key] Repeat the key: ")
     if new_key != new_key_rep:
         print("Entered keys are not the same!")
     else:
-        config.recrypt_firebase_key(new_key)
         storage.recrypt(new_key)
         print("New key applied, data recrypted")
 

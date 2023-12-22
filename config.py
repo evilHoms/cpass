@@ -48,13 +48,20 @@ class Config:
                 json.dump(self.config, file)
             
         return cred, bucket
-    
-    def recrypt_firebase_key(self, new_key):
+            
+    def recrypt_firebase_config(self, new_key):
         if self.config[FIREBASE_NAME]:
-            dkey = self.cryptor.decrypt(self.config[FIREBASE_NAME])
             new_cryptor = Cryptor(new_key)
-            self.config[FIREBASE_NAME]["key"] = new_cryptor.encrypt(dkey)
+            new_key = new_cryptor.encrypt(new_key)
+            old_cred = self.cryptor.decrypt(self.config[FIREBASE_NAME]["cred"])
+            new_cred = new_cryptor.encrypt(old_cred)
+
+            self.config[FIREBASE_NAME]["key"] = new_key
+            self.config[FIREBASE_NAME]["cred"] = new_cred
             
             with open(self.config_path, 'w') as file:
                 json.dump(self.config, file)
+        else:
+            print("No Firebase config found.")
+        
             

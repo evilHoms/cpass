@@ -36,6 +36,10 @@ class FileStore:
             file.write(self.cryptor.encrypt(json.dumps(data)))
             
     def recrypt(self, new_key: str):
+        if not self.store_path.exists():
+            print("No local storage found.")
+            return
+
         with open(self.store_path) as file:
             cdata = file.read()
             data = json.loads(self.cryptor.decrypt(cdata))
