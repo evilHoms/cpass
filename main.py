@@ -20,6 +20,7 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
+# TODO add update
 # TODO write tests
 
 args = ArgParser()
@@ -59,21 +60,22 @@ if args.mode == "change":
         print("New key applied, data recrypted")
 
 if args.mode == "add":
-    add_tip_prompt = False
-    if (not args.name or not args.login or not args.password) and not args.tip:
-        add_tip_prompt = True
-    
     if not args.name:
         args.name = input("Enter the name: ")
         
     args.name = storage.check_name(args.name)
-        
-    if not args.login:
-        args.login = input(f"Enter the login to save for {args.name} (Empty by default): ")
-
+    
     if args.gen_pass:
         args.password = gen_pass()
-    elif not args.password:
+        
+    add_tip_prompt = False
+    if not args.password and not args.tip:
+        add_tip_prompt = True
+        
+    if not args.login and not args.password:
+        args.login = input(f"Enter the login to save for {args.name} (Empty by default): ")
+
+    if not args.password:
         args.password = input(f"Enter the password to save for {args.name}: ")
         
     if add_tip_prompt:
@@ -114,6 +116,17 @@ elif args.mode == "rm":
         print(f"No items found by '{args.name}' name")
     else:
         print(f"Removed records: {num_removed}")
+        
+elif args.mode == "rename":
+    if not args.name:
+        args.name = input("Enter the name to remove: ")
+    if not args.new_name:
+        args.new_name = input("Enter new name: ")
+    is_renamed = storage.rename(args.name, args.new_name)
+    if is_renamed:
+        print(f"Renamed {args.name} -> {args.new_name}")
+    else:
+        print(f"No record with name: {args.name}")
 
 elif args.mode != "config" and args.mode != "change":
     print("Wrong mode!")

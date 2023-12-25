@@ -99,6 +99,15 @@ class Storage:
         for key in key_list:
             print(f"{key}: {self.store[key]}")
             
+    def rename(self, old_name: str, new_name: str):
+        if old_name in self.store:
+            self.store[new_name] = self.store.pop(old_name)
+            # Update local and external storages
+            self.file_store.update_file(self.store)
+            self.upload_external()
+            return True
+        return False
+            
     def check_name(self, name: str):
         index = 0
         pname = name
