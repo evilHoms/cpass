@@ -6,12 +6,12 @@ import json
 
 class FirebaseStore:
     
-    def __init__(self, enc_cred: str, bucket: str, files_dir: str, store_name: str, key: str):
-        self.cryptor = Cryptor(key)
+    def __init__(self, enc_cred: str, bucket: str, files_dir: str, store_name: str, cryptor: Cryptor):
+        self.cryptor = cryptor
         conf = json.loads(self.cryptor.decrypt(enc_cred))
         cred = credentials.Certificate(conf)
         
-        firebase_admin.initialize_app(cred, { "storageBucket": bucket.replace("gs://", "") })
+        firebase_admin.initialize_app(cred, { "storageBucket": self.cryptor.decrypt(bucket).replace("gs://", "") })
         
         self.files_dir = files_dir
         self.store_name = store_name

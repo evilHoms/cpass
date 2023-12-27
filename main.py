@@ -20,7 +20,6 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO change hash key and recrypt with it
 # TODO add update
 # TODO write tests
 
@@ -55,13 +54,27 @@ except:
 
 if args.mode == "change":
     print("Keys for both local and external storeage will be changed.")
-    new_key = getpass("[Key] Enter new key: ")
-    new_key_rep = getpass("[Key] Repeat the key: ")
-    if new_key != new_key_rep:
-        print("Entered keys are not the same!")
+    new_key = getpass("[KEY] Enter new key (Leave empty to keep same key): ")
+    if new_key:
+        new_key_rep = getpass("[KEY] Repeat the key: ")
+        if new_key != new_key_rep:
+            print("Entered keys are not the same!")
+            exit(0)
     else:
-        storage.recrypt(new_key)
-        print("New key applied, data recrypted")
+        new_key = cryptor.key
+        
+    new_hash_key = getpass("[HASH KEY] Enter new key (Leave empty to keep same key): ")
+    if new_hash_key:
+        new_hash_key_rep = getpass("[HASH KEY] Repeat the key: ")
+        if new_hash_key != new_hash_key_rep:
+            print("Entered keys are not the same!")
+            exit(0)
+    else:
+        new_hash_key = cryptor.hash_key
+        
+    storage.recrypt(new_key, new_hash_key)
+    print("Keys are applied, the data is recrypted.")
+    print("If you use the script with saved via install.sh key, you will need to reinstall it.")
 
 if args.mode == "add":
     if not args.name:

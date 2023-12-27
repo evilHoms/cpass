@@ -25,8 +25,9 @@ class Config:
         return self.config[FIREBASE_NAME]["cred"], self.config[FIREBASE_NAME]["bucket"], self.config[FIREBASE_NAME]["key"]
     
     def set_firebase_config(self):
+        print("Before connecting to firebase, if there is already encrypted data.store, make sure that same KEY and HASH KEY are used.")
         if self.config[FIREBASE_NAME]:
-            print(f"Current config:\nCreds: [encrypted]\nBucket: {self.config[FIREBASE_NAME]['bucket']}")
+            print(f"Current config:\nCreds: [encrypted]\nBucket: {self.cryptor.decrypt(self.config[FIREBASE_NAME]['bucket'])}")
 
         path = input("Enter path to the firebase config file: (Full absolute path with file name and extension)\n[Config]: ")
         cred, bucket = None, None
@@ -39,25 +40,24 @@ class Config:
                 print(str(e))
                 exit(0)
 
-            bucket = input("Enter firebase bucket name\n[Bucket]: ")
-            fb_key = input("If there is any encrypted data in the bucket and there was used another key to encrypt it, enter it here (Or leave empty if key is the same or bucket store is empty)\n[Key]: ")
-            key = fb_key if fb_key else self.cryptor.key
-            self.config[FIREBASE_NAME] = { "bucket": bucket, "cred": cred, "key": self.cryptor.encrypt(key) }
+            bucket = self.cryptor.encrypt(input("Enter firebase bucket name\n[Bucket]: "))
+            self.config[FIREBASE_NAME] = { "bucket": bucket, "cred": cred }
             
             with open(self.config_path, 'w') as file:
                 json.dump(self.config, file)
             
         return cred, bucket
             
-    def recrypt_firebase_config(self, new_key):
+    def recrypt_firebase_config(self, new_key, new_hash_key):
         if self.config[FIREBASE_NAME]:
-            new_cryptor = Cryptor(new_key)
-            new_key = new_cryptor.encrypt(new_key)
+            new_cryptor = Cryptor(new_key, new_hash_key)
             old_cred = self.cryptor.decrypt(self.config[FIREBASE_NAME]["cred"])
             new_cred = new_cryptor.encrypt(old_cred)
+            old_bucket = self.cryptor.decrypt(self.config[FIREBASE_NAME]["bucket"])
+            new_bucket = new_cryptor.encrypt(old_bucket)
 
-            self.config[FIREBASE_NAME]["key"] = new_key
             self.config[FIREBASE_NAME]["cred"] = new_cred
+            self.config[FIREBASE_NAME]["bucket"] = new_bucket
             
             with open(self.config_path, 'w') as file:
                 json.dump(self.config, file)

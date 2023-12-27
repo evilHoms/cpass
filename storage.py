@@ -19,7 +19,7 @@ class Storage:
         if not local_mode:
             fb_path, fb_bucket, fb_key = config.get_firebase_config()
         if fb_path and fb_bucket and fb_key:
-            self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, self.cryptor.decrypt(fb_key))
+            self.fb = FirebaseStore(fb_path, fb_bucket, file_dir, store_name, self.cryptor)
             fb_mod_time, fb_data = self.fb.download_data()
 
         # Check data from local file and from firebase, if data not synced ask which one to apply
@@ -116,10 +116,10 @@ class Storage:
             pname = name + f" ({index})"
         return pname
     
-    def recrypt(self, new_key: str):
-        self.file_store.recrypt(new_key)
+    def recrypt(self, new_key: str, new_hash_key: str):
+        self.file_store.recrypt(new_key, new_hash_key)
         self.upload_external()
-        self.config.recrypt_firebase_config(new_key)
+        self.config.recrypt_firebase_config(new_key, new_hash_key)
         
     def upload_external(self):
         if hasattr(self, "fb"):

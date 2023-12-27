@@ -15,8 +15,8 @@ If you will run `cpass -k[key] ls` and see `No records` in the console - evereth
 
 There are few options for data protection:
 * Most secured but not very convenient: `./install.sh` without arguments and enter 2 keys all the time you use cpass, `cpass ls` and then enter in hidden prompt 2 passwords. Or you can pass key and hash key as parameters `cpass -k[key] -K[hash_key] ls`, but it a bit less secured as people can see you keys.
-Use this method if other people have access to the computer where you use it.
-* Optimal way: `./install.sh [hash_key]` installation with one of the keys, so you will need to enter only one to run cpass. Run `cpass ls` without key arguments and enter one key in the secret prompt or pass the key via arguments `cpass -k[key] ls`. Optimal for home, where strangers don't have access to your computer. Don't use this install method on public computers as you hash key will be exposed.
+Use this method if other people have access to the computer where you use it. If you are not going to use computer anymore, remove `./local` dir.
+* Optimal way: `./install.sh [hash_key]` installation with one of the keys, so you will need to enter only one to run cpass. Run `cpass ls` without key arguments and enter one key in the secret prompt or pass the key via arguments `cpass -k[key] ls`. Optimal for home, where strangers don't have access to your computer. Don't use this install method on public computers as your hash key will be exposed.
 * Less secured (not recommended): only if you know what you are doing, `./install.sh [hash_key] [key]` use install script with both keys, so you won't be asked to enter keys when you run cpass. Data still will be encrypted, but anybody will be able to see all records without entering any passwords.
 
 #### With firebase:
@@ -26,7 +26,8 @@ After installing dependencies, you will need https://firebase.google.com/ accoun
 3. Then run script in config mode with the key you will use `cpass -k[key] config`.
 4. When it'll be asked to enter path to the config file, enter path to the json file which you get after clicking on `Generate new private key` button in firebase console.
 5. When it'll be asked to enter bucket, just past path you copied on the 2nd step
-6. If you didn't use this bucket from other pc with different key, leave 3st prompt empty
+
+If you have an account with existed already data.store, make sure that key and hash key are the same. If not, change keys before configuring.
 
 ## Usage
 To show all records `cpass -k[key] ls`
@@ -51,6 +52,6 @@ To get full list of commands `cpass --help`
 
 ## TODO
 
+Add confidential mode. No local data store. No config file, both keys, config, bucket and internet connection are required for each command, nothing is stored locally.
 Add method to update data by provided name
-Add method to change hash key
 Write tests
