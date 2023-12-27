@@ -13,6 +13,12 @@ Put the script where you want it to be, cd to the script's dir.
 run `./install.sh` script, it will generate `cpass` script, put it to your PATH dirrectory for easy use.
 If you will run `cpass -k[key] ls` and see `No records` in the console - everething is good.
 
+There are few options for data protection:
+* Most secured but not very convenient: `./install.sh` without arguments and enter 2 keys all the time you use cpass, `cpass ls` and then enter in hidden prompt 2 passwords. Or you can pass key and hash key as parameters `cpass -k[key] -K[hash_key] ls`, but it a bit less secured as people can see you keys.
+Use this method if other people have access to the computer where you use it.
+* Optimal way: `./install.sh [hash_key]` installation with one of the keys, so you will need to enter only one to run cpass. Run `cpass ls` without key arguments and enter one key in the secret prompt or pass the key via arguments `cpass -k[key] ls`. Optimal for home, where strangers don't have access to your computer. Don't use this install method on public computers as you hash key will be exposed.
+* Less secured (not recommended): only if you know what you are doing, `./install.sh [hash_key] [key]` use install script with both keys, so you won't be asked to enter keys when you run cpass. Data still will be encrypted, but anybody will be able to see all records without entering any passwords.
+
 #### With firebase:
 After installing dependencies, you will need https://firebase.google.com/ account, config and bucket.
 1. To get config, go to account console -> Project settings -> Click `Generate new private key`
@@ -45,5 +51,6 @@ To get full list of commands `cpass --help`
 
 ## TODO
 
-Add bash script to automate instalation and adding to PATH.
+Add method to update data by provided name
+Add method to change hash key
 Write tests

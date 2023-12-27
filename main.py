@@ -20,6 +20,7 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
+# TODO change hash key and recrypt with it
 # TODO add update
 # TODO write tests
 
@@ -30,9 +31,12 @@ if args.mode == "gen":
     exit(0)
 
 if not args.key:
-    args.key = getpass("Enter the key: ")
+    args.key = getpass("[KEY]: ")
+    
+if not args.hash_key:
+    args.hash_key = getpass("[HASH_KEY]: ")
 
-cryptor = Cryptor(args.key)
+cryptor = Cryptor(args.key, args.hash_key)
 config = Config(cryptor, CONFIG_FILE_PATH)
 
 if args.mode == "config":
