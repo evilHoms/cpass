@@ -20,9 +20,6 @@ DATA_FILE_NAME = "data.store"
 # Path to config file. json format
 CONFIG_FILE_PATH = Path(f"{LOCAL_FILES_DIR}/config.json")
 
-# TODO add update
-# TODO write tests
-
 args = ArgParser()
 
 if args.mode == "gen":
@@ -76,11 +73,18 @@ if args.mode == "change":
     print("Keys are applied, the data is recrypted.")
     print("If you use the script with saved via install.sh key, you will need to reinstall it.")
 
-if args.mode == "add":
+if args.mode == "add" or args.mode == "update":
     if not args.name:
         args.name = input("Enter the name: ")
+    
+    checked_name = storage.check_name(args.name)
+    
+    if args.mode == "update" and checked_name == args.name:
+        print(f"Record with name {args.name} doesn't exist")
+        exit(0)
         
-    args.name = storage.check_name(args.name)
+    if args.mode == "add":
+        args.name = checked_name
     
     if args.gen_pass:
         args.password = gen_pass()

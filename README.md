@@ -52,6 +52,4 @@ To get full list of commands `cpass --help`
 
 ## TODO
 
-Add confidential mode. No local data store. No config file, both keys, config, bucket and internet connection are required for each command, nothing is stored locally.
-Add method to update data by provided name
 Write tests
