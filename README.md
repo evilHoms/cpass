@@ -6,6 +6,7 @@ All information is encrypted with key, which you enter after adding first record
 
 ### Prerequisites
 Was tested on Mint/Ubuntu with Python -V 3.10.12
+Installed python3-pip is required
 
 ### Installation
 #### Local version:
@@ -22,6 +23,7 @@ Use this method if other people have access to the computer where you use it. If
 #### With firebase:
 After installing dependencies, you will need https://firebase.google.com/ account, config and bucket.
 1. To get config, go to account console -> Project settings -> Click `Generate new private key`
+Use same config between different computers/users if you want to share same store.
 2. To get bucket, go to Build -> Storage -> New bucket -> Copy folder path
 3. Then run script in config mode with the key you will use `cpass -k[key] config`.
 4. When it'll be asked to enter path to the config file, enter path to the json file which you get after clicking on `Generate new private key` button in firebase console.

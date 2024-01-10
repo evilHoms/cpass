@@ -7,6 +7,7 @@ from config import Config
 from passgen import gen_pass
 from pathlib import Path
 from getpass import getpass
+from getch import getch
 import os
 
 # Path to dir with local files and make sure that it is exist
@@ -151,3 +152,7 @@ elif args.mode == "rename":
 
 elif args.mode != "config" and args.mode != "change":
     print("Wrong mode!")
+    
+print("Press any key")
+getch()
+os.system("clear")
